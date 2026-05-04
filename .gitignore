@@ -1,0 +1,18 @@
+# PIC-lite | Git Protection
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+.gemini/
+
+# Node (if used in future)
+node_modules/
+npm-debug.log
+
+# Build outputs
+dist/
+build/

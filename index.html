@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PIC-lite | Pro Camera</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="loading">
+    <div id="app">
+        <!-- Startup Loader -->
+        <div id="loader">
+            <div class="loader-logo">PIC-lite</div>
+            <div class="loader-bar"><div class="loader-progress"></div></div>
+        </div>
+
+        <video id="video" autoplay playsinline muted></video>
+        
+        <div id="viewport">
+            <canvas id="canvas"></canvas>
+            <!-- Professional Framing Aids -->
+            <div class="hud-layer">
+                <div class="hud-corner top-left"></div>
+                <div class="hud-corner top-right"></div>
+                <div class="hud-corner bottom-left"></div>
+                <div class="hud-corner bottom-right"></div>
+                <div class="scan-line"></div>
+            </div>
+            <div id="flash"></div>
+        </div>
+
+        <!-- Global Management Bar -->
+        <div class="top-bar">
+            <button id="gallery-btn" class="glass-btn preview-btn" title="View Archive">
+                <div class="gallery-preview"></div>
+                <i data-lucide="layout-grid"></i>
+            </button>
+            
+            <div class="mode-switcher">
+                <button class="mode-btn active" data-mode="photo">PHOTO</button>
+                <button class="mode-btn" data-mode="video">VIDEO</button>
+            </div>
+
+            <div class="top-actions">
+                <button id="flip-btn" class="glass-btn" title="Switch Camera">
+                    <i data-lucide="refresh-cw"></i>
+                </button>
+                <button id="settings-btn" class="glass-btn" title="Preferences">
+                    <i data-lucide="settings"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Creative Control Suite -->
+        <div class="ui-overlay">
+            <div class="carousel-wrapper">
+                <div id="filter-carousel" class="carousel"></div>
+            </div>
+
+            <div class="capture-row">
+                <div class="control-side left-side">
+                    <button class="small-btn" id="zap-btn" title="Random Filter"><i data-lucide="sparkles"></i></button>
+                </div>
+                
+                <button id="capture-btn" title="Take Photo">
+                    <div class="btn-outer">
+                        <div id="shutter-inner" class="btn-inner"></div>
+                    </div>
+                </button>
+                
+                <div class="control-side right-side">
+                    <button class="small-btn" id="toggle-filters-btn" title="Toggle Filters UI"><i data-lucide="eye"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Notifications -->
+        <div id="toast" class="hidden">
+            <div class="toast-content">
+                <i data-lucide="info"></i>
+                <span>Notice</span>
+            </div>
+        </div>
+
+        <!-- Preferences Modal -->
+        <div id="settings-modal" class="hidden">
+            <div class="modal-blur"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>PREFERENCES</h3>
+                    <button id="close-settings" class="icon-btn" title="Close"><i data-lucide="x"></i></button>
+                </div>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <i data-lucide="focus"></i>
+                            <span>HUD Brackets</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-hud" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <i data-lucide="monitor"></i>
+                            <span>High Resolution</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-res" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <i data-lucide="zap"></i>
+                            <span>Tactile Haptics</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-haptics" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Review Stage -->
+        <div id="photo-view" class="hidden">
+            <div class="view-blur-bg"></div>
+            <div class="photo-view-content">
+                <div class="photo-view-header">
+                    <button id="close-photo" class="close-btn" title="Back to Camera"><i data-lucide="chevron-left"></i></button>
+                </div>
+                <div class="photo-card">
+                    <img id="detail-img" src="" alt="Captured Photo">
+                </div>
+                <div class="photo-footer">
+                    <div class="temp-warning">
+                        <i data-lucide="alert-triangle"></i>
+                        <span>Temporary Store: Files lost on refresh</span>
+                    </div>
+                    <div class="photo-actions">
+                        <button id="save-desktop-btn" class="luxe-btn primary" title="Download to PC">SAVE</button>
+                        <button id="share-wa-btn" class="luxe-btn secondary" title="Share Photo">SHARE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Archive -->
+        <div id="gallery-overlay" class="hidden">
+            <div class="gallery-header">
+                <div class="header-main">
+                    <h2>ARCHIVE</h2>
+                    <div class="temp-warning">
+                        <i data-lucide="alert-triangle"></i>
+                        <span>Temporary Storage Active</span>
+                    </div>
+                </div>
+                <button id="close-gallery" class="close-btn" title="Close Archive"><i data-lucide="x"></i></button>
+            </div>
+            <div id="gallery-grid"></div>
+        </div>
+
+        <!-- Access Error Stage -->
+        <div id="error-screen" class="hidden">
+            <div class="error-panel">
+                <i data-lucide="camera-off"></i>
+                <h1>ACCESS BLOCKED</h1>
+                <p>Camera permission is required.</p>
+                <button id="retry-btn">ENABLE ACCESS</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
