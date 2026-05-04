@@ -69,7 +69,7 @@ PIC-lite is fully optimized for static hosting:
 1. Push your code to a GitHub repository.
 2. Go to **Settings > Pages**.
 3. Select the `main` branch as the source.
-4. Your pro camera will be live at `https://binaryofbaaj.github.io/pic-lite/`.
+4. Your pro camera will be live at `https://your-username.github.io/repo-name/`.
 
 ---
 
