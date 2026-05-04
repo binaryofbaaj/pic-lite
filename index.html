@@ -24,11 +24,18 @@
             <canvas id="canvas"></canvas>
             <!-- Professional Framing Aids -->
             <div class="hud-layer">
+                <div id="recording-frame"></div>
                 <div class="hud-corner top-left"></div>
                 <div class="hud-corner top-right"></div>
                 <div class="hud-corner bottom-left"></div>
                 <div class="hud-corner bottom-right"></div>
                 <div class="scan-line"></div>
+                <!-- Recording Feedback -->
+                <div id="recording-hud" class="hidden">
+                    <span class="rec-label">REC</span>
+                    <div class="rec-dot"></div>
+                    <span id="rec-timer">00:00</span>
+                </div>
             </div>
             <div id="flash"></div>
         </div>
@@ -40,10 +47,10 @@
                 <i data-lucide="layout-grid"></i>
             </button>
             
-            <div class="mode-switcher">
-                <button class="mode-btn active" data-mode="photo">PHOTO</button>
-                <button class="mode-btn" data-mode="video">VIDEO</button>
-            </div>
+            <button id="mode-toggle" class="glass-btn mode-toggle-btn" title="Toggle Photo/Video">
+                <i data-lucide="camera" id="mode-icon"></i>
+                <span id="mode-text">PHOTO</span>
+            </button>
 
             <div class="top-actions">
                 <button id="flip-btn" class="glass-btn" title="Switch Camera">

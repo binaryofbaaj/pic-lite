@@ -84,15 +84,17 @@ class PicLiteEngine {
         document.getElementById('retry-btn').addEventListener('click', () => this.startCamera());
         document.getElementById('zap-btn').addEventListener('click', () => this.pickRandomFilter());
 
-        // Mode Switching Logic
-        document.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.vibrate(20);
-                this.mode = e.target.dataset.mode;
-                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                document.body.classList.toggle('mode-video', this.mode === 'video');
-            });
+        document.getElementById('mode-toggle').addEventListener('click', (e) => {
+            this.mode = this.mode === 'photo' ? 'video' : 'photo';
+            const isVideo = this.mode === 'video';
+            this.vibrate(isVideo ? [20, 20] : 15);
+            
+            document.getElementById('mode-text').textContent = this.mode.toUpperCase();
+            document.getElementById('mode-icon').setAttribute('data-lucide', isVideo ? 'video' : 'camera');
+            document.body.classList.toggle('mode-video', isVideo);
+            
+            if (window.lucide) lucide.createIcons();
+            this.showToast(`MODE: ${this.mode.toUpperCase()}`);
         });
 
         // Review Actions
@@ -346,9 +348,10 @@ class PicLiteEngine {
     }
 
     startRecording() {
-        this.vibrate([40, 20]);
+        this.vibrate([100, 30, 100]); // Heavy mechanical engage feel
         this.isRecording = true;
         this.recordedChunks = [];
+        this.showToast("RECORDING STARTED", 1500);
         
         // Merge Filtered Video + Hardware Audio
         const videoStream = this.canvas.captureStream(30);
@@ -376,8 +379,9 @@ class PicLiteEngine {
     }
 
     stopRecording() {
-        this.vibrate([20, 40]);
+        this.vibrate([20, 20, 20, 100]); // Heavy stop feel
         this.isRecording = false;
+        this.showToast("RECORDING SAVED", 1500);
         this.mediaRecorder.stop();
         document.body.classList.remove('recording');
         document.getElementById('recording-hud').classList.add('hidden');
