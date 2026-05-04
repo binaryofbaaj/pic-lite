@@ -151,14 +151,14 @@ class PicLiteEngine {
         try {
             if (this.stream) this.stream.getTracks().forEach(track => track.stop());
             
-            // Pro Engine resolution selection
             const width = this.prefs.highRes ? { ideal: 3840 } : { ideal: 1280 };
             const height = this.prefs.highRes ? { ideal: 2160 } : { ideal: 720 };
             
             const constraints = {
                 video: { facingMode: this.currentFacingMode, width, height },
-                audio: false
+                audio: true // Enabled hardware microphone
             };
+
             this.stream = await navigator.mediaDevices.getUserMedia(constraints);
             this.video.srcObject = this.stream;
             await this.video.play();
@@ -166,8 +166,22 @@ class PicLiteEngine {
             this.resizeCanvas();
         } catch (err) {
             console.error("Camera Handshake Failed:", err);
-            document.getElementById('error-screen').classList.remove('hidden');
+            // Fallback to video-only if audio is denied
+            if (err.name === 'NotAllowedError' || err.name === 'NotFoundError') {
+                this.startCameraVideoOnly();
+            } else {
+                document.getElementById('error-screen').classList.remove('hidden');
+            }
         }
+    }
+
+    async startCameraVideoOnly() {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        this.stream = stream;
+        this.video.srcObject = stream;
+        await this.video.play();
+        document.getElementById('error-screen').classList.add('hidden');
+        this.resizeCanvas();
     }
 
     resizeCanvas() {
@@ -336,9 +350,14 @@ class PicLiteEngine {
         this.isRecording = true;
         this.recordedChunks = [];
         
-        // Use canvas stream for recording to capture filters
-        const stream = this.canvas.captureStream(30);
-        this.mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+        // Merge Filtered Video + Hardware Audio
+        const videoStream = this.canvas.captureStream(30);
+        const audioTrack = this.stream.getAudioTracks()[0];
+        
+        const combinedStream = new MediaStream([videoStream.getVideoTracks()[0]]);
+        if (audioTrack) combinedStream.addTrack(audioTrack);
+        
+        this.mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm' });
         
         this.mediaRecorder.ondataavailable = (e) => {
             if (e.data.size > 0) this.recordedChunks.push(e.data);
